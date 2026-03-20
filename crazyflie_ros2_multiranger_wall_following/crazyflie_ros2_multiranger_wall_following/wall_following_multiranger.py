@@ -75,6 +75,8 @@ class WallFollowingMultiranger(Node):
 
         # Give a take off command but wait for the delay to start the wall following
         self.wait_for_start = True
+        #quick fix: hard-pause for 2 seconds to let the Gazebo bridge connect
+        time.sleep(2.0)
         self.start_clock = self.get_clock().now().nanoseconds * 1e-9
         msg = Twist()
         msg.linear.z = 0.5
