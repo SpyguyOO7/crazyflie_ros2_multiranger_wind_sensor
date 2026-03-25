@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'mock_wind_sensor = crazyflie_wind_mapping.mock_wind_sensor:main',
+            'real_wind_sensor = crazyflie_wind_mapping.real_wind_sensor:main',
             'wind_field_mapper = crazyflie_wind_mapping.wind_field_mapper:main',
         ],
     },

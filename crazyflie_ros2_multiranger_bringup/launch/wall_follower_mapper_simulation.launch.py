@@ -69,9 +69,31 @@ def generate_launch_description():
             }]
             )
 
+    mock_wind_sensor = Node(
+        package = 'crazyflie_wind_mapping',
+        executable='mock_wind_sensor',
+        name = 'mock_wind_sensor',
+        output = 'screen',
+        parameters=[
+            {'use_sim_time':False}
+        ]
+    )
+    
+    wind_field_mapper = Node(
+        package = 'crazyflie_wind_mapping',
+        executable='wind_field_mapper',
+        name = 'wind_field_mapper',
+        output = 'screen',
+        parameters=[
+            {'robot_prefix': 'crazyflie_real'},
+            {'use_sim_time': False}
+        ]
+    )
     return LaunchDescription([
         crazyflie_simulation,
         simple_mapper,
         wall_following,
+        mock_wind_sensor,
+        wind_field_mapper,
         rviz
         ])

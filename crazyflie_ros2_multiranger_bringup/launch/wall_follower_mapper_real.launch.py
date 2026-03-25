@@ -67,7 +67,26 @@ def generate_launch_description():
             {'wall_following_direction': 'right'}
         ]
     )
-
+    real_wind_sensor = Node(
+        package = 'crazyflie_wind_mapping',
+        executable='real_wind_sensor',
+        name = 'real_wind_sensor',
+        output = 'screen',
+        parameters=[
+            {'use_sim_time':False}
+        ]
+    )
+    
+    wind_field_mapper = Node(
+        package = 'crazyflie_wind_mapping',
+        executable='wind_field_mapper',
+        name = 'wind_field_mapper',
+        output = 'screen',
+        parameters=[
+            {'robot_prefix': 'crazyflie_real'},
+            {'use_sim_time': False}
+        ]
+    )
     rviz_config_path = os.path.join(
         get_package_share_directory('crazyflie_ros2_multiranger_bringup'),
         'config',
@@ -89,5 +108,7 @@ def generate_launch_description():
         crazyflie_vel_mux,
         simple_mapper,
         wall_following,
+        real_wind_sensor,
+        wind_field_mapper,
         rviz
         ])
