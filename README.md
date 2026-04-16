@@ -1,8 +1,6 @@
 # crazyflie_ros2_multiranger
 This repository contains different ROS 2 nodes to interact with the multiranger on the Crazyflie for both simulation as the real Crazyflie.
 
-> Disclaimer: This project is experimental and prone to errors as it is not regularly maintained. Please start a [ticket](https://github.com/knmcguire/crazyflie_ros2_multiranger/issues) if you encounter any issues but do expect limited support
-
 
 ## Installation
 
