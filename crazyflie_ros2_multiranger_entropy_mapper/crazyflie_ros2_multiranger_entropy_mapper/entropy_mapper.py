@@ -29,8 +29,8 @@ class EntropyMapper(Node):
         # 0.2m (20cm) resolution is a good balance. 
         # Keeps physical walls crisp, but caps markers at 10,000 so RViz won't crash
         self.map_res = 0.2  
-        self.map_size_x = 20.0  
-        self.map_size_y = 20.0  
+        self.map_size_x = 4.0  
+        self.map_size_y = 4.0  
         self.map_width = int(self.map_size_x / self.map_res)
         self.map_height = int(self.map_size_y / self.map_res)
         
@@ -41,7 +41,7 @@ class EntropyMapper(Node):
         self.entropy_map = np.ones((self.map_height, self.map_width), dtype=np.float32)
         
         # Algorithm Tuning
-        self.lambda_decay = 2.0  
+        self.lambda_decay = 0.5  
         self.explore_radius = 5  
 
         # --- Publishers ---
@@ -69,7 +69,7 @@ class EntropyMapper(Node):
         
         # --- State Variables ---
         self.drone_x, self.drone_y, self.drone_z, self.drone_yaw = None, None, None, None
-        self.target_x, self.target_y, self.target_z, self.target_yaw = 0.0, 0.0, 0.5, 0.0
+        self.target_x, self.target_y, self.target_z, self.target_yaw = 0.0, 0.0, 0.25, 0.0
         
         self.state = 'INIT'
         self.measure_start_time = 0.0
@@ -261,7 +261,7 @@ class EntropyMapper(Node):
             
             marker.pose.position.x = (gx * self.map_res) - (self.map_size_x / 2.0) + (self.map_res / 2.0)
             marker.pose.position.y = (gy * self.map_res) - (self.map_size_y / 2.0) + (self.map_res / 2.0)
-            marker.pose.position.z = -0.1 
+            marker.pose.position.z = 0.1 
             
             marker.scale.x = self.map_res * 0.95
             marker.scale.y = self.map_res * 0.95
