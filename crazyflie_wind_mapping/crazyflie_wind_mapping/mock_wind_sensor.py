@@ -6,26 +6,51 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Vector3Stamped
 
 class MockWindSensor(Node):
-    """Simulates a hardware wind sensor by generating a synthetic vector field based on position."""
+    """Simulates a hardware wind sensor by generating a synthetic 2D fluid dipole field."""
     
     def __init__(self) -> None:
         super().__init__('mock_wind_sensor')
         
-        self.wind_pub = self.create_publisher(Vector3Stamped, '/crazyflie/wind_sensor', 10)
+        self.wind_pub = self.create_publisher(Vector3Stamped, 'wind_sensor', 10)
         self.odom_sub = self.create_subscription(Odometry, '/crazyflie/odom', self.odom_callback, 10)
         
-        self.get_logger().info('Mock Wind Sensor initialized.')
+        # --- Dipole Field Parameters ---
+        # High pressure source (e.g., an AC supply vent)
+        self.source_x = 1.0
+        self.source_y = 0.0
+        
+        # Low pressure sink (e.g., an AC return vent)
+        self.sink_x = -1.0
+        self.sink_y = 0.0
+        
+        # Strength of the flow
+        self.flow_strength = 8.0 
+        
+        # Prevent division by zero if drone is directly on top of a pole
+        self.epsilon = 0.1 
+        
+        self.get_logger().info('Mock Wind Sensor initialized with Dipole Field.')
 
     def odom_callback(self, msg: Odometry) -> None:
-        # Extract current position (to be used later for complex field equations)
+        # Extract current drone position
         x: float = msg.pose.pose.position.x
         y: float = msg.pose.pose.position.y
-        z: float = msg.pose.pose.position.z
         
-        # Define the static vector field (e.g., a gentle breeze in the positive X/Y direction)
-        wind_u: float = 1.0  
-        wind_v: float = 0.5  
-        wind_w: float = 0.0  
+        # Vectors from poles to drone
+        dx_source = x - self.source_x
+        dy_source = y - self.source_y
+        
+        dx_sink = x - self.sink_x
+        dy_sink = y - self.sink_y
+        
+        # Squared distances (with epsilon to avoid singularities)
+        dist_sq_source = (dx_source**2 + dy_source**2) + self.epsilon
+        dist_sq_sink = (dx_sink**2 + dy_sink**2) + self.epsilon
+        
+        # 2D Fluid Dipole Equation: V = Q * [ (d_source / r_source^2) - (d_sink / r_sink^2) ]
+        wind_u: float = self.flow_strength * ((dx_source / dist_sq_source) - (dx_sink / dist_sq_sink))
+        wind_v: float = self.flow_strength * ((dy_source / dist_sq_source) - (dy_sink / dist_sq_sink))
+        wind_w: float = 0.0  # Keep it 2D for the occupancy grid mapping
         
         # Package and publish
         wind_msg = Vector3Stamped()

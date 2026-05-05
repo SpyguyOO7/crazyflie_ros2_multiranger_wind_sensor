@@ -70,6 +70,7 @@ def generate_launch_description():
     real_wind_sensor = Node(
         package = 'crazyflie_wind_mapping',
         executable='real_wind_sensor',
+        namespace='crazyflie_real',     # <--- This pushes relative topics into the namespace
         name = 'real_wind_sensor',
         output = 'screen',
         parameters=[
@@ -80,6 +81,7 @@ def generate_launch_description():
     wind_field_mapper = Node(
         package = 'crazyflie_wind_mapping',
         executable='wind_field_mapper',
+        namespace='crazyflie_real',     # <--- This pushes relative topics into the namespace
         name = 'wind_field_mapper',
         output = 'screen',
         parameters=[
@@ -102,7 +104,13 @@ def generate_launch_description():
                 "use_sim_time": False
             }]
             )
-
+    static_tf_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='world_to_crazyflie_tf',
+        # These are the exact arguments from your terminal command
+        arguments=['0', '0', '0', '0', '0', '0', 'world', 'map']
+    )
     return LaunchDescription([
         crazyflie_real,
         crazyflie_vel_mux,
@@ -110,5 +118,6 @@ def generate_launch_description():
         wall_following,
         real_wind_sensor,
         wind_field_mapper,
-        rviz
+        rviz,
+        static_tf_node
         ])
